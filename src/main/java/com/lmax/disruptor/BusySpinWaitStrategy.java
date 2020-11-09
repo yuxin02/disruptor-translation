@@ -16,6 +16,10 @@
 package com.lmax.disruptor;
 
 
+import com.lmax.disruptor.AlertException;
+import com.lmax.disruptor.Sequence;
+import com.lmax.disruptor.SequenceBarrier;
+import com.lmax.disruptor.WaitStrategy;
 import com.lmax.disruptor.util.ThreadHints;
 
 /**
@@ -36,7 +40,7 @@ public final class BusySpinWaitStrategy implements WaitStrategy
 {
     @Override
     public long waitFor(
-        final long sequence, Sequence cursor, final Sequence dependentSequence, final SequenceBarrier barrier)
+            final long sequence, Sequence cursor, final Sequence dependentSequence, final SequenceBarrier barrier)
         throws AlertException, InterruptedException
     {
         long availableSequence;

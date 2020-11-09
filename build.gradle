@@ -44,7 +44,7 @@ sourceSets {
     perf.java.srcDir file('src/perftest/java')
 }
 
-eclipse.classpath.plusConfigurations += [ sourceSets.perf.compileClasspath ]
+eclipse.classpath.plusConfigurations += [sourceSets.perf.compileClasspath]
 
 repositories {
     mavenCentral()
@@ -56,11 +56,21 @@ dependencies {
     perfCompile 'org.hdrhistogram:HdrHistogram:1.2.1'
     // https://mvnrepository.com/artifact/org.openjdk.jol/jol-core
     compile group: 'org.openjdk.jol', name: 'jol-core', version: '0.14'
+
+    // https://mvnrepository.com/artifact/org.slf4j/slf4j-log4j12
+    compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.25'
+
+
+    // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-slf4j-impl
+    compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.11.0'
+    // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api
+    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.11.0'
+
 }
 
 idea.module {
     testSourceDirs += sourceSets.perf.allSource.srcDirs
-    scopes.TEST.plus += [ configurations.perfCompile ]
+    scopes.TEST.plus += [configurations.perfCompile]
 }
 
 sourceCompatibility = 1.8
@@ -98,10 +108,10 @@ javadoc {
 
 jar {
     manifest.attributes('Built-By': System.properties['user.name'],
-                        'Bundle-Name': fullName,
-                        'Bundle-Vendor': teamName,
-                        'Bundle-Description': fullDescription,
-                        'Bundle-DocURL': siteUrl)
+            'Bundle-Name': fullName,
+            'Bundle-Vendor': teamName,
+            'Bundle-Description': fullDescription,
+            'Bundle-DocURL': siteUrl)
 }
 
 task sourcesJar(type: Jar) {

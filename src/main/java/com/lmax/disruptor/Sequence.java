@@ -15,6 +15,7 @@
  */
 package com.lmax.disruptor;
 
+import org.openjdk.jol.info.ClassLayout;
 import sun.misc.Unsafe;
 
 import com.lmax.disruptor.util.Util;
@@ -179,5 +180,12 @@ public class Sequence extends RhsPadding {
     @Override
     public String toString() {
         return Long.toString(get());
+    }
+
+
+    public static void main(String[] args) {
+        Sequence sequence = new Sequence(8);
+
+        System.out.println(ClassLayout.parseInstance(sequence).toPrintable());
     }
 }

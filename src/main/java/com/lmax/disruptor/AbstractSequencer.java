@@ -15,11 +15,11 @@
  */
 package com.lmax.disruptor;
 
-import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
-
 import com.lmax.disruptor.util.Util;
 import org.openjdk.jol.info.ClassLayout;
+
+import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 
 /**
  * 抽象序号生成器，作为单生产者和多生产者序列号生成器的超类，实现一些公共的功能(添加删除gatingSequence)。

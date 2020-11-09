@@ -123,8 +123,7 @@ public final class RingBuffer<E> extends RingBufferFields<E> implements Cursored
      * @param sequencer    sequencer to handle the ordering of events moving through the RingBuffer.
      * @throws IllegalArgumentException if bufferSize is less than 1 or not a power of 2
      */
-    RingBuffer(EventFactory<E> eventFactory,
-               Sequencer sequencer) {
+    RingBuffer(EventFactory<E> eventFactory, Sequencer sequencer) {
         super(eventFactory, sequencer);
     }
 

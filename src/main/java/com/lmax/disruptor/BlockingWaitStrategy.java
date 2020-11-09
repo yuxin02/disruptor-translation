@@ -15,6 +15,10 @@
  */
 package com.lmax.disruptor;
 
+import com.lmax.disruptor.AlertException;
+import com.lmax.disruptor.Sequence;
+import com.lmax.disruptor.SequenceBarrier;
+import com.lmax.disruptor.WaitStrategy;
 import com.lmax.disruptor.util.ThreadHints;
 
 import java.util.concurrent.locks.Condition;
@@ -31,7 +35,10 @@ public final class BlockingWaitStrategy implements WaitStrategy {
     private final Condition processorNotifyCondition = lock.newCondition();
 
     @Override
-    public long waitFor(long wantedSequence, Sequence cursorSequence, Sequence dependentSequence, SequenceBarrier barrier)
+    public long waitFor(long wantedSequence,
+                        Sequence cursorSequence,
+                        Sequence dependentSequence,
+                        SequenceBarrier barrier)
             throws AlertException, InterruptedException {
         // 确保生产者已生产了该数据，这期间可能阻塞
         long availableSequence;
@@ -48,6 +55,8 @@ public final class BlockingWaitStrategy implements WaitStrategy {
         }
 
         // 等待前驱消费者消费完对应的事件，这是实现消费者之间happens-before的关键
+        // 如果没有其他dependent，dependent和cursor是同一个, 这里直接满足了
+        // 如果依赖其他消费者，还需要判断和其他消费者之间的关系，等待消费最慢的（最后一名）也赶上申请的sequence
         while ((availableSequence = dependentSequence.get()) < wantedSequence) {
             barrier.checkAlert();
             ThreadHints.onSpinWait();
@@ -68,8 +77,6 @@ public final class BlockingWaitStrategy implements WaitStrategy {
 
     @Override
     public String toString() {
-        return "BlockingWaitStrategy{" +
-                "processorNotifyCondition=" + processorNotifyCondition +
-                '}';
+        return "BlockingWaitStrategy{processorNotifyCondition=" + processorNotifyCondition + '}';
     }
 }

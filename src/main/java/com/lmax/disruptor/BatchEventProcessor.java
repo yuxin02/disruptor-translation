@@ -87,10 +87,9 @@ public final class BatchEventProcessor<T> implements EventProcessor {
      * @param sequenceBarrier on which it is waiting.
      * @param eventHandler    is the delegate to which events are dispatched.
      */
-    public BatchEventProcessor(
-            final DataProvider<T> dataProvider,
-            final SequenceBarrier sequenceBarrier,
-            final EventHandler<? super T> eventHandler) {
+    public BatchEventProcessor(final DataProvider<T> dataProvider,
+                               final SequenceBarrier sequenceBarrier,
+                               final EventHandler<? super T> eventHandler) {
         this.dataProvider = dataProvider;
         this.sequenceBarrier = sequenceBarrier;
         this.eventHandler = eventHandler;
@@ -195,6 +194,7 @@ public final class BatchEventProcessor<T> implements EventProcessor {
                 }
 
                 // 批量消费，由于没有其它事件处理器和我竞争序号，这些序号我都是可以消费的
+                // TODO： 如果某个消费者一次性获取了很多sequence但是又消费很慢会是什么情况？在我批量处理完之前，producer不能放数据
                 while (nextSequence <= availableSequence) {
                     event = dataProvider.get(nextSequence);
                     eventHandler.onEvent(event, nextSequence, nextSequence == availableSequence);

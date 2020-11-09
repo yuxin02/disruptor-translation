@@ -16,4 +16,9 @@ public class PersonEventTranslator implements EventTranslator<PersonEvent> {
         Person p = new Person(id, "Zhang San" + " -- " + id);
         event.setPerson(p);
     }
+
+    public static void eventTranslatorWithTwoArg(PersonEvent event, long sequencem, int id, String name) {
+        Person p = new Person(id, name);
+        event.setPerson(p);
+    }
 }

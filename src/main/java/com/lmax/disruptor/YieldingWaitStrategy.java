@@ -16,6 +16,11 @@
 package com.lmax.disruptor;
 
 
+import com.lmax.disruptor.AlertException;
+import com.lmax.disruptor.Sequence;
+import com.lmax.disruptor.SequenceBarrier;
+import com.lmax.disruptor.WaitStrategy;
+
 /**
  * 该策略在尝试一定次数的自旋等待(空循环)之后使用尝试让出cpu。
  * 该策略将会占用大量的CPU资源(100%)，但是比{@link BusySpinWaitStrategy}策略更容易在其他线程需要CPU时让出CPU。
@@ -34,7 +39,7 @@ public final class YieldingWaitStrategy implements WaitStrategy
 
     @Override
     public long waitFor(
-        final long sequence, Sequence cursor, final Sequence dependentSequence, final SequenceBarrier barrier)
+            final long sequence, Sequence cursor, final Sequence dependentSequence, final SequenceBarrier barrier)
         throws AlertException, InterruptedException
     {
         long availableSequence;

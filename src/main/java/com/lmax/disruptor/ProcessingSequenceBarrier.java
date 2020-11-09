@@ -81,6 +81,7 @@ final class ProcessingSequenceBarrier implements SequenceBarrier {
         }
 
         // 目标sequence已经发布了，这里获取真正的最大序号(和生产者模型有关)
+        // 针对多生产者，还需要判断sequence中已经发布的最大值
         return sequencer.getHighestPublishedSequence(sequence, availableSequence);
     }
 

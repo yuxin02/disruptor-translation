@@ -27,12 +27,12 @@ public class MainTest {
     }
 
     public static void main(String[] args) {
-        exampleWithTranslator(5);
+//        exampleWithTranslator(5);
 //        exampleWithTranslatorAndArg();
 //        exampleOfRingBufferPublishDirectly();
 
 
-//        exampleWithMultiProducer();
+        exampleWithMultiProducer();
 
         System.out.println("Remaining capacity: " + ringBuffer.remainingCapacity());
         PersonEvent personEvent = ringBuffer.get(0);
@@ -95,10 +95,11 @@ public class MainTest {
     }
 
     private static void exampleWithMultiProducer() {
-        ringBuffer = RingBuffer.createMultiProducer(MainTest::eventFactory, 1<<3);
+        ringBuffer = RingBuffer.createMultiProducer(MainTest::eventFactory, 1<<10);
+        // TODO: 这里换成SingleProducer会出错，single里面没有同步机制，multi里通过竞争cursor达到同步
 //        ringBuffer = RingBuffer.createSingleProducer(MainTest::eventFactory, 1<<3);
 
-        int size = 10;
+        int size = 1024;
         CountDownLatch countDownLatch = new CountDownLatch(size);
 
         for (int i = 0; i < size; i++) {
