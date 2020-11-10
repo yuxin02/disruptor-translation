@@ -40,6 +40,7 @@ public final class ValueAdditionEventHandler implements EventHandler<ValueEvent>
         value.set(value.get() + event.getValue());
 
         if (count == sequence) {
+//            System.out.println(this.value.get());
             latch.countDown();
         }
     }

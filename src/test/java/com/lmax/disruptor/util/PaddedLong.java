@@ -15,18 +15,18 @@
  */
 package com.lmax.disruptor.util;
 
+import org.openjdk.jol.info.ClassLayout;
+
 /**
  * Cache line padded long variable to be used when false sharing maybe an issue.
  */
-public final class PaddedLong extends MutableLong
-{
+public final class PaddedLong extends MutableLong {
     public volatile long p1, p2, p3, p4, p5, p6 = 7L;
 
     /**
      * Default constructor
      */
-    public PaddedLong()
-    {
+    public PaddedLong() {
     }
 
     /**
@@ -34,13 +34,15 @@ public final class PaddedLong extends MutableLong
      *
      * @param initialValue for construction
      */
-    public PaddedLong(final long initialValue)
-    {
+    public PaddedLong(final long initialValue) {
         super(initialValue);
     }
 
-    public long sumPaddingToPreventOptimisation()
-    {
+    public long sumPaddingToPreventOptimisation() {
         return p1 + p2 + p3 + p4 + p5 + p6;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(ClassLayout.parseInstance(new PaddedLong()).toPrintable());
     }
 }

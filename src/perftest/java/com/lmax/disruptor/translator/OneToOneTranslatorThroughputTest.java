@@ -28,6 +28,7 @@ import com.lmax.disruptor.util.DaemonThreadFactory;
 import com.lmax.disruptor.util.MutableLong;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import static com.lmax.disruptor.support.PerfTestUtil.failIfNot;
 
@@ -80,6 +81,7 @@ public final class OneToOneTranslatorThroughputTest extends AbstractPerfTestDisr
                 new YieldingWaitStrategy());
         disruptor.handleEventsWith(handler);
         this.ringBuffer = disruptor.start();
+        System.out.println("Expected Result: " + expectedResult);
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -107,7 +109,7 @@ public final class OneToOneTranslatorThroughputTest extends AbstractPerfTestDisr
         }
 
         latch.await();
-        long opsPerSecond = (ITERATIONS * 1000L) / (System.currentTimeMillis() - start);
+        long opsPerSecond = (ITERATIONS * 1000L) / (System.currentTimeMillis()  - start);
         waitForEventProcessorSequence(expectedCount);
 
         failIfNot(expectedResult, handler.getValue());
@@ -126,7 +128,7 @@ public final class OneToOneTranslatorThroughputTest extends AbstractPerfTestDisr
 
     private void waitForEventProcessorSequence(long expectedCount) throws InterruptedException {
         while (ringBuffer.getMinimumGatingSequence() != expectedCount) {
-            Thread.sleep(1);
+            TimeUnit.MILLISECONDS.sleep(1);
         }
     }
 

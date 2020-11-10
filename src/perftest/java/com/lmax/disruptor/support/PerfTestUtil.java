@@ -15,32 +15,33 @@
  */
 package com.lmax.disruptor.support;
 
-public final class PerfTestUtil
-{
-    public static long accumulatedAddition(final long iterations)
-    {
+public final class PerfTestUtil {
+    private static final long ITERATIONS = 1000L * 1000L * 100L;
+    public static long accumulatedAddition(final long iterations) {
         long temp = 0L;
-        for (long i = 0L; i < iterations; i++)
-        {
+        for (long i = 0L; i < iterations; i++) {
             temp += i;
         }
 
         return temp;
     }
 
-    public static void failIf(long a, long b)
-    {
-        if (a == b)
-        {
+    public static void failIf(long a, long b) {
+        if (a == b) {
             throw new RuntimeException();
         }
     }
 
-    public static void failIfNot(long a, long b)
-    {
-        if (a != b)
-        {
+    public static void failIfNot(long a, long b) {
+        if (a != b) {
             throw new RuntimeException();
         }
+    }
+
+    public static void main(String[] args) {
+        long start = System.currentTimeMillis();
+        System.out.println(accumulatedAddition(ITERATIONS));
+        long opsPerSecond = (ITERATIONS * 1000L) / (System.currentTimeMillis()  - start);
+        System.out.format("No Disruptor=%,d ops/sec%n",  Long.valueOf(opsPerSecond));
     }
 }
