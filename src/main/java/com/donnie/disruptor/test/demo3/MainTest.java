@@ -9,18 +9,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class MainTest {
     private static final Logger logger = LoggerFactory.getLogger(MainTest.class);
+
     public static void main(String[] args) {
         logger.info("Start testing ...");
-        //创建一个线程池用于执行Workhandler。
-        Executor executor = Executors.newFixedThreadPool(4);
-        // 这个已经不推荐使用
-        Disruptor<PersonEvent> disruptor = new Disruptor<>(new PersonEventFactory(), 4, executor);
+        Disruptor<PersonEvent> disruptor = new Disruptor<>(new PersonEventFactory(), 4, Executors.defaultThreadFactory());
 
         EventHandler<PersonEvent> handler1 = (event, sequence, endOfBatch) -> {
             System.out.println("handle event's data:" + event.getPerson() + "isEndOfBatch:" + endOfBatch);

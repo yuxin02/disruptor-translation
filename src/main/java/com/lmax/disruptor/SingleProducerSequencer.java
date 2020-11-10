@@ -69,7 +69,7 @@ abstract class SingleProducerSequencerFields extends SingleProducerSequencerPad 
      * PS: 使用一个变化频率较低的值代替一个变化频率较高的值，提高读效率。
      * <p>
      * 在每次查询消费者的进度后，就会对它进行缓存
-     * 会在{@link SingleProducerSequencer#hasAvailableCapacity(int, boolean)}
+     * 会在{@link SingleProducerSequencer#hasAvailableCapacity(int)}
      * {@link SingleProducerSequencer#tryNext(int)}
      * {@link SingleProducerSequencer#next(int)}
      * <p>
@@ -138,6 +138,7 @@ public final class SingleProducerSequencer extends SingleProducerSequencerFields
             // 因为publish使用的是set()/putOrderedLong，并不保证消费者能及时看见发布的数据，
             // 当我再次申请更多的空间时，必须保证消费者能消费发布的数据（那么就需要进度对消费者立即可见，使用volatile写即可）
             // 插入StoreLoad内存屏障/栅栏，确保立即的可见性。
+            // TODO: 在tryNext时，doStore传入的是true，如果发现没有可用，可以通过volatile设置，让消费者及时发现可用数据，快点干活
             if (doStore) {
                 cursor.setVolatile(nextValue);  // StoreLoad fence
             }
@@ -195,6 +196,7 @@ public final class SingleProducerSequencer extends SingleProducerSequencerFields
             // 插入StoreLoad内存屏障/栅栏，保证可见性。
             // 因为publish使用的是set()/putOrderedLong，并不保证其他消费者能及时看见发布的数据
             // 当我再次申请更多的空间时，必须保证消费者能消费发布的数据
+            // TODO: 进入到这来，说明消费太慢了，有可能消费者没及时发现数据，这来volatile更新一下，让消费者及时看到数据，快点儿干活
             cursor.setVolatile(nextValue);  // StoreLoad fence
 
             long minSequence;

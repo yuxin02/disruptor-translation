@@ -10,41 +10,35 @@ import com.lmax.disruptor.util.DaemonThreadFactory;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-public class WaitForShutdown
-{
+public class WaitForShutdown {
     private static volatile int value = 0;
 
-    private static class Handler implements EventHandler<LongEvent>, LifecycleAware
-    {
+    private static class Handler implements EventHandler<LongEvent>, LifecycleAware {
         private final CountDownLatch latch;
 
-        Handler(CountDownLatch latch)
-        {
+        Handler(CountDownLatch latch) {
             this.latch = latch;
         }
 
         @Override
-        public void onStart()
-        {
+        public void onStart() {
         }
 
         @Override
-        public void onShutdown()
-        {
+        public void onShutdown() {
             latch.countDown();
         }
 
         @Override
-        public void onEvent(LongEvent event, long sequence, boolean endOfBatch) throws Exception
-        {
+        public void onEvent(LongEvent event, long sequence, boolean endOfBatch) throws Exception {
+            TimeUnit.SECONDS.sleep(3);
             value = 1;
         }
     }
 
-    public static void main(String[] args) throws TimeoutException, InterruptedException
-    {
+    public static void main(String[] args) throws TimeoutException, InterruptedException {
         Disruptor<LongEvent> disruptor = new Disruptor<LongEvent>(
-            LongEvent.FACTORY, 16, DaemonThreadFactory.INSTANCE
+                LongEvent.FACTORY, 16, DaemonThreadFactory.INSTANCE
         );
 
         CountDownLatch shutdownLatch = new CountDownLatch(2);
@@ -56,9 +50,11 @@ public class WaitForShutdown
         disruptor.getRingBuffer().get(next).set(next);
         disruptor.getRingBuffer().publish(next);
 
+
         disruptor.shutdown(10, TimeUnit.SECONDS);
 
         shutdownLatch.await();
+
 
         System.out.println(value);
     }

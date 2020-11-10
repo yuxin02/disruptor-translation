@@ -8,8 +8,7 @@ import java.util.concurrent.Executor;
 /**
  * 一个消费者信息的抽象，
  */
-interface ConsumerInfo
-{
+interface ConsumerInfo {
     /**
      * 获取消费者拥有的所有的序列，一个消费者可能有多个Sequence，消费者的消费进度由最小的Sequence决定。
      * 这里返回数组类型，其实仅仅是为了避免{@link com.lmax.disruptor.FixedSequenceGroup}。
@@ -19,7 +18,7 @@ interface ConsumerInfo
     /**
      * 获取当前消费者持有的序列屏障。
      * 其作用详见{@link SequenceBarrier}
-     *
+     * <p>
      * {@link com.lmax.disruptor.Sequencer#newBarrier(Sequence...)}
      */
     SequenceBarrier getBarrier();
@@ -27,7 +26,7 @@ interface ConsumerInfo
     /**
      * 当前消费者是否是消费链末端的消费者(没有后继消费者)。
      * 如果是末端的消费者，那么它就是生产者关注的消费者（网关序列）。
-     *
+     * <p>
      * {@link com.lmax.disruptor.Sequencer#addGatingSequences(Sequence...)}
      * {@link com.lmax.disruptor.Sequencer#removeGatingSequence(Sequence)}}
      * {@link com.lmax.disruptor.AbstractSequencer#gatingSequences}

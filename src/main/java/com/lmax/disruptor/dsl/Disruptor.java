@@ -54,6 +54,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * </pre>
  *
  * @param <T> the type of event used.
+ * @author
  */
 public class Disruptor<T> {
     private final RingBuffer<T> ringBuffer;
@@ -121,33 +122,28 @@ public class Disruptor<T> {
     }
 
     /**
-     * 创建一个Disruptor示例。 默认使用阻塞等待策略和多生产者模型。
      * <p>
      * Create a new Disruptor. Will default to {@link com.lmax.disruptor.BlockingWaitStrategy} and
      * {@link ProducerType}.MULTI
      *
-     * @param eventFactory   the factory to create events in the ring buffer. 事件对象工厂
-     * @param ringBufferSize the size of the ring buffer. RingBuffer环形缓冲区大小
-     * @param threadFactory  a {@link ThreadFactory} to create threads to for processors. 消费者线程工厂
+     * @param eventFactory   the factory to create events in the ring buffer.
+     * @param ringBufferSize the size of the ring buffer. RingBuffer
+     * @param threadFactory  a {@link ThreadFactory} to create threads to for processors.
      */
-    public Disruptor(final EventFactory<T> eventFactory, final int ringBufferSize, final ThreadFactory threadFactory) {
+    public Disruptor(final EventFactory<T> eventFactory,
+                     final int ringBufferSize,
+                     final ThreadFactory threadFactory) {
         this(RingBuffer.createMultiProducer(eventFactory, ringBufferSize), new BasicExecutor(threadFactory));
     }
 
     /**
-     * 创建一个Disruptor 可以自定义所有参数
      * Create a new Disruptor.
      *
      * @param eventFactory   the factory to create events in the ring buffer.
-     *                       事件工厂，为环形缓冲区填充数据使用
      * @param ringBufferSize the size of the ring buffer, must be power of 2.
-     *                       环形缓冲区大小，必须是2的n次方
      * @param threadFactory  a {@link ThreadFactory} to create threads for processors.
-     *                       事件处理器的线程工厂(每一个EventProcessor需要一个独立的线程)
      * @param producerType   the claim strategy to use for the ring buffer.
-     *                       生产者模型
      * @param waitStrategy   the wait strategy to use for the ring buffer.
-     *                       等待策略，事件处理器在等待可用数据时的策略。
      */
     public Disruptor(final EventFactory<T> eventFactory,
                      final int ringBufferSize,
@@ -589,9 +585,8 @@ public class Disruptor<T> {
      * @param eventHandlers    事件处理方法 每一个EventHandler都会被包装为{@link BatchEventProcessor}(一个独立的消费者).
      * @return
      */
-    EventHandlerGroup<T> createEventProcessors(
-            final Sequence[] barrierSequences,
-            final EventHandler<? super T>[] eventHandlers) {
+    EventHandlerGroup<T> createEventProcessors(final Sequence[] barrierSequences,
+                                               final EventHandler<? super T>[] eventHandlers) {
         // 组织消费者之间的关系只能在启动之前
         checkNotStarted();
 
@@ -604,8 +599,7 @@ public class Disruptor<T> {
         for (int i = 0, eventHandlersLength = eventHandlers.length; i < eventHandlersLength; i++) {
             final EventHandler<? super T> eventHandler = eventHandlers[i];
 
-            final BatchEventProcessor<T> batchEventProcessor =
-                    new BatchEventProcessor<>(ringBuffer, barrier, eventHandler);
+            final BatchEventProcessor<T> batchEventProcessor = new BatchEventProcessor<>(ringBuffer, barrier, eventHandler);
 
             if (exceptionHandler != null) {
                 batchEventProcessor.setExceptionHandler(exceptionHandler);
@@ -646,8 +640,8 @@ public class Disruptor<T> {
     /**
      * 注释详见{@link #createEventProcessors(Sequence[], EventHandler[])}
      */
-    EventHandlerGroup<T> createEventProcessors(
-            final Sequence[] barrierSequences, final EventProcessorFactory<T>[] processorFactories) {
+    EventHandlerGroup<T> createEventProcessors(final Sequence[] barrierSequences,
+                                               final EventProcessorFactory<T>[] processorFactories) {
         final EventProcessor[] eventProcessors = new EventProcessor[processorFactories.length];
         for (int i = 0; i < processorFactories.length; i++) {
             eventProcessors[i] = processorFactories[i].createEventProcessor(ringBuffer, barrierSequences);

@@ -15,7 +15,11 @@
  */
 package com.lmax.disruptor.workhandler;
 
-import static com.lmax.disruptor.RingBuffer.createMultiProducer;
+import com.lmax.disruptor.*;
+import com.lmax.disruptor.support.ValueAdditionWorkHandler;
+import com.lmax.disruptor.support.ValueEvent;
+import com.lmax.disruptor.support.ValuePublisher;
+import com.lmax.disruptor.util.DaemonThreadFactory;
 
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutorService;
@@ -23,17 +27,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.locks.LockSupport;
 
-import com.lmax.disruptor.AbstractPerfTestDisruptor;
-import com.lmax.disruptor.BusySpinWaitStrategy;
-import com.lmax.disruptor.IgnoreExceptionHandler;
-import com.lmax.disruptor.RingBuffer;
-import com.lmax.disruptor.Sequence;
-import com.lmax.disruptor.SequenceBarrier;
-import com.lmax.disruptor.WorkProcessor;
-import com.lmax.disruptor.support.ValueAdditionWorkHandler;
-import com.lmax.disruptor.support.ValueEvent;
-import com.lmax.disruptor.support.ValuePublisher;
-import com.lmax.disruptor.util.DaemonThreadFactory;
+import static com.lmax.disruptor.RingBuffer.createMultiProducer;
 
 /**
  * <pre>
@@ -54,8 +48,7 @@ import com.lmax.disruptor.util.DaemonThreadFactory;
  * WP2 - EventProcessor 2
  * </pre>
  */
-public final class TwoToTwoWorkProcessorThroughputTest extends AbstractPerfTestDisruptor
-{
+public final class TwoToTwoWorkProcessorThroughputTest extends AbstractPerfTestDisruptor {
     private static final int NUM_PUBLISHERS = 2;
     private static final int BUFFER_SIZE = 1024 * 64;
     private static final long ITERATIONS = 1000L * 1000L * 1L;
@@ -65,7 +58,7 @@ public final class TwoToTwoWorkProcessorThroughputTest extends AbstractPerfTestD
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private final RingBuffer<ValueEvent> ringBuffer =
-        createMultiProducer(ValueEvent.EVENT_FACTORY, BUFFER_SIZE, new BusySpinWaitStrategy());
+            createMultiProducer(ValueEvent.EVENT_FACTORY, BUFFER_SIZE, new BusySpinWaitStrategy());
 
     private final SequenceBarrier sequenceBarrier = ringBuffer.newBarrier();
     private final Sequence workSequence = new Sequence(-1);
@@ -82,20 +75,19 @@ public final class TwoToTwoWorkProcessorThroughputTest extends AbstractPerfTestD
 
     {
         workProcessors[0] = new WorkProcessor<ValueEvent>(
-            ringBuffer, sequenceBarrier,
-            handlers[0], new IgnoreExceptionHandler(),
-            workSequence);
+                ringBuffer, sequenceBarrier,
+                handlers[0], new IgnoreExceptionHandler(),
+                workSequence);
         workProcessors[1] = new WorkProcessor<ValueEvent>(
-            ringBuffer, sequenceBarrier,
-            handlers[1], new IgnoreExceptionHandler(),
-            workSequence);
+                ringBuffer, sequenceBarrier,
+                handlers[1], new IgnoreExceptionHandler(),
+                workSequence);
     }
 
     private final ValuePublisher[] valuePublishers = new ValuePublisher[NUM_PUBLISHERS];
 
     {
-        for (int i = 0; i < NUM_PUBLISHERS; i++)
-        {
+        for (int i = 0; i < NUM_PUBLISHERS; i++) {
             valuePublishers[i] = new ValuePublisher(cyclicBarrier, ringBuffer, ITERATIONS);
         }
 
@@ -105,36 +97,30 @@ public final class TwoToTwoWorkProcessorThroughputTest extends AbstractPerfTestD
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
-    protected int getRequiredProcessorCount()
-    {
+    protected int getRequiredProcessorCount() {
         return 4;
     }
 
     @Override
-    protected long runDisruptorPass() throws Exception
-    {
+    protected long runDisruptorPass() throws Exception {
         long expected = ringBuffer.getCursor() + (NUM_PUBLISHERS * ITERATIONS);
         Future<?>[] futures = new Future[NUM_PUBLISHERS];
-        for (int i = 0; i < NUM_PUBLISHERS; i++)
-        {
+        for (int i = 0; i < NUM_PUBLISHERS; i++) {
             futures[i] = executor.submit(valuePublishers[i]);
         }
 
-        for (WorkProcessor<ValueEvent> processor : workProcessors)
-        {
+        for (WorkProcessor<ValueEvent> processor : workProcessors) {
             executor.submit(processor);
         }
 
         long start = System.currentTimeMillis();
         cyclicBarrier.await();
 
-        for (int i = 0; i < NUM_PUBLISHERS; i++)
-        {
+        for (int i = 0; i < NUM_PUBLISHERS; i++) {
             futures[i].get();
         }
 
-        while (workSequence.get() < expected)
-        {
+        while (workSequence.get() < expected) {
             LockSupport.parkNanos(1L);
         }
 
@@ -142,16 +128,14 @@ public final class TwoToTwoWorkProcessorThroughputTest extends AbstractPerfTestD
 
         Thread.sleep(1000);
 
-        for (WorkProcessor<ValueEvent> processor : workProcessors)
-        {
+        for (WorkProcessor<ValueEvent> processor : workProcessors) {
             processor.halt();
         }
 
         return opsPerSecond;
     }
 
-    public static void main(String[] args) throws Exception
-    {
+    public static void main(String[] args) throws Exception {
         new TwoToTwoWorkProcessorThroughputTest().testImplementations();
     }
 }

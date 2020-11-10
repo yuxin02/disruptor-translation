@@ -18,32 +18,28 @@ import java.util.concurrent.ThreadFactory;
  * 导致生产者阻塞，生产者阻塞又导致其它消费者阻塞 --> 死锁。
  * {@link Disruptor#Disruptor(EventFactory, int, Executor)}
  * {@link Disruptor#Disruptor(EventFactory, int, Executor, ProducerType, WaitStrategy)}
- *
+ * <p>
  * {@link BasicExecutor} 看似无界线程池，但实际是有界线程池，因为EventProcessor的数量是固定的。
  * 创建的线程数取决于EventProcessor的数量。
- *
+ * <p>
  * 且该线程池不会用到工作队列{@link java.util.concurrent.BlockingQueue}，而是通过{@link com.lmax.disruptor.RingBuffer}
  * 协调生产者与消费者之间的速度。
  */
-public class BasicExecutor implements Executor
-{
+public class BasicExecutor implements Executor {
     private final ThreadFactory factory;
     private final Queue<Thread> threads = new ConcurrentLinkedQueue<>();
 
-    public BasicExecutor(ThreadFactory factory)
-    {
+    public BasicExecutor(ThreadFactory factory) {
         this.factory = factory;
     }
 
-	/**
-	 * @param command 在disruptor中其实就是 {@link com.lmax.disruptor.EventProcessor}
-	 */
+    /**
+     * @param command 在disruptor中其实就是 {@link com.lmax.disruptor.EventProcessor}
+     */
     @Override
-    public void execute(Runnable command)
-    {
+    public void execute(Runnable command) {
         final Thread thread = factory.newThread(command);
-        if (null == thread)
-        {
+        if (null == thread) {
             throw new RuntimeException("Failed to create thread to run: " + command);
         }
 
@@ -53,21 +49,14 @@ public class BasicExecutor implements Executor
     }
 
     @Override
-    public String toString()
-    {
-        return "BasicExecutor{" +
-            "threads=" + dumpThreadInfo() +
-            '}';
+    public String toString() {
+        return "BasicExecutor{threads=" + dumpThreadInfo() + '}';
     }
 
-    private String dumpThreadInfo()
-    {
+    private String dumpThreadInfo() {
         final StringBuilder sb = new StringBuilder();
-
         final ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
-
-        for (Thread t : threads)
-        {
+        for (Thread t : threads) {
             ThreadInfo threadInfo = threadMXBean.getThreadInfo(t.getId());
             sb.append("{");
             sb.append("name=").append(t.getName()).append(",");

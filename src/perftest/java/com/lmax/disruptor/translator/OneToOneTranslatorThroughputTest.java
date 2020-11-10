@@ -60,8 +60,7 @@ import static com.lmax.disruptor.support.PerfTestUtil.failIfNot;
  *
  * </pre>
  */
-public final class OneToOneTranslatorThroughputTest extends AbstractPerfTestDisruptor
-{
+public final class OneToOneTranslatorThroughputTest extends AbstractPerfTestDisruptor {
     private static final int BUFFER_SIZE = 1024 * 64;
     private static final long ITERATIONS = 1000L * 1000L * 100L;
     private final long expectedResult = PerfTestUtil.accumulatedAddition(ITERATIONS);
@@ -72,12 +71,11 @@ public final class OneToOneTranslatorThroughputTest extends AbstractPerfTestDisr
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     @SuppressWarnings("unchecked")
-    public OneToOneTranslatorThroughputTest()
-    {
-        Disruptor<ValueEvent> disruptor =
-            new Disruptor<ValueEvent>(
+    public OneToOneTranslatorThroughputTest() {
+        Disruptor<ValueEvent> disruptor = new Disruptor<ValueEvent>(
                 ValueEvent.EVENT_FACTORY,
-                BUFFER_SIZE, DaemonThreadFactory.INSTANCE,
+                BUFFER_SIZE,
+                DaemonThreadFactory.INSTANCE,
                 ProducerType.SINGLE,
                 new YieldingWaitStrategy());
         disruptor.handleEventsWith(handler);
@@ -87,14 +85,12 @@ public final class OneToOneTranslatorThroughputTest extends AbstractPerfTestDisr
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
-    protected int getRequiredProcessorCount()
-    {
+    protected int getRequiredProcessorCount() {
         return 2;
     }
 
     @Override
-    protected long runDisruptorPass() throws InterruptedException
-    {
+    protected long runDisruptorPass() throws InterruptedException {
         MutableLong value = this.value;
 
         final CountDownLatch latch = new CountDownLatch(1);
@@ -105,8 +101,7 @@ public final class OneToOneTranslatorThroughputTest extends AbstractPerfTestDisr
 
         final RingBuffer<ValueEvent> rb = ringBuffer;
 
-        for (long l = 0; l < ITERATIONS; l++)
-        {
+        for (long l = 0; l < ITERATIONS; l++) {
             value.set(l);
             rb.publishEvent(Translator.INSTANCE, value);
         }
@@ -120,27 +115,22 @@ public final class OneToOneTranslatorThroughputTest extends AbstractPerfTestDisr
         return opsPerSecond;
     }
 
-    private static class Translator implements EventTranslatorOneArg<ValueEvent, MutableLong>
-    {
+    private static class Translator implements EventTranslatorOneArg<ValueEvent, MutableLong> {
         private static final Translator INSTANCE = new Translator();
 
         @Override
-        public void translateTo(ValueEvent event, long sequence, MutableLong arg0)
-        {
+        public void translateTo(ValueEvent event, long sequence, MutableLong arg0) {
             event.setValue(arg0.get());
         }
     }
 
-    private void waitForEventProcessorSequence(long expectedCount) throws InterruptedException
-    {
-        while (ringBuffer.getMinimumGatingSequence() != expectedCount)
-        {
+    private void waitForEventProcessorSequence(long expectedCount) throws InterruptedException {
+        while (ringBuffer.getMinimumGatingSequence() != expectedCount) {
             Thread.sleep(1);
         }
     }
 
-    public static void main(String[] args) throws Exception
-    {
+    public static void main(String[] args) throws Exception {
         OneToOneTranslatorThroughputTest test = new OneToOneTranslatorThroughputTest();
         test.testImplementations();
     }

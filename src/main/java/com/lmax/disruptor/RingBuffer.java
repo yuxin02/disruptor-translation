@@ -1064,8 +1064,10 @@ public final class RingBuffer<E> extends RingBufferFields<E> implements Cursored
 
     public static void main(String[] args) {
         SingleProducerSequencer sequencer = new SingleProducerSequencer(4, new BlockingWaitStrategy());
+        System.out.println(ClassLayout.parseInstance(sequencer).toPrintable());
+
         RingBuffer<Integer> ringBuffer = new RingBuffer<>(() -> new Integer(0), sequencer);
 
-        System.out.println(ClassLayout.parseInstance(ringBuffer).toPrintable());
+//        System.out.println(ClassLayout.parseInstance(ringBuffer).toPrintable());
     }
 }
