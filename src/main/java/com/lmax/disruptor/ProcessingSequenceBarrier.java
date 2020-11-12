@@ -30,10 +30,10 @@ final class ProcessingSequenceBarrier implements SequenceBarrier {
      * 依赖的Sequence。
      * EventProcessor(事件处理器)的Sequence必须小于等于依赖的Sequence
      * 来自于{@link com.lmax.disruptor.dsl.EventHandlerGroup#sequences}
-     * <p>
-     * 对于直接和Sequencer相连的消费者，它依赖的Sequence就是Sequencer的Sequence。
-     * 对于跟在其它消费者屁股后面的消费者，它依赖的Sequence就是它跟随的所有消费者的Sequence。
-     * <p>
+     * <ul>
+     * <li>对于直接和Sequencer相连的消费者，它依赖的Sequence就是Sequencer的Sequence。</li>
+     * <li>对于跟在其它消费者屁股后面的消费者，它依赖的Sequence就是它跟随的所有消费者的Sequence。</li>
+     * </ul>
      * 类似 {@link AbstractSequencer#gatingSequences}
      * dependentSequence
      */

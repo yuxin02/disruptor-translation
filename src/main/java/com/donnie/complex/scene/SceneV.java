@@ -26,13 +26,12 @@ public class SceneV {
         disruptor.start();
 
         OrderEventProducer producer = new OrderEventProducer(disruptor.getRingBuffer());
-
         for (int i = 0; i < 3; i++) {
             producer.onData(new Order(i));
         }
+
         //为了保证消费者线程已经启动，留足足够的时间
         Thread.sleep(1000);
         disruptor.shutdown();
-
     }
 }

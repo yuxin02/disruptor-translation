@@ -17,12 +17,12 @@ package com.lmax.disruptor;
 
 /**
  * 数据提供者，目前就是 {@link RingBuffer}
+ *
  * @param <T>
  */
-public interface DataProvider<T>
-{
-	/**
-	 * 根据指定序号获取data
-	 */
+public interface DataProvider<T> {
+    /**
+     * 根据指定序号获取data
+     */
     T get(long sequence);
 }

@@ -16,6 +16,7 @@
 package com.lmax.disruptor;
 
 import com.lmax.disruptor.util.Util;
+import org.openjdk.jol.info.ClassLayout;
 import sun.misc.Unsafe;
 
 import java.util.concurrent.locks.LockSupport;
@@ -234,7 +235,7 @@ public final class MultiProducerSequencer extends AbstractSequencer {
                 // 消费者最新的进度仍然与我构成了环路，那么只能重试
                 if (wrapPoint > gatingSequence) {
                     // TODO, should we spin based on the wait strategy?
-                    // wrapPoint > gatingSequence 意外着 gatingSequence无效，因为生产者期待的是一个大于等于wrapPoint的值，因此也就不更新缓存。
+                    // wrapPoint > gatingSequence 意味着gatingSequence无效，因为生产者期待的是一个大于等于wrapPoint的值，因此也就不更新缓存。
                     LockSupport.parkNanos(1);
                     continue;
                 }
@@ -317,11 +318,10 @@ public final class MultiProducerSequencer extends AbstractSequencer {
      * 初始化插槽上的标记为不可用
      */
     private void initialiseAvailableBuffer() {
-        // TODO: 1. 这里为什么是由大到小开始
+        // TODO: 1. 这里为什么是由大到小开始, 位置0为什么单独设置?
         for (int i = availableBuffer.length - 1; i != 0; i--) {
             setAvailableBufferValue(i, -1);
         }
-        // TODO: 2. 这里位置0为什么单独设置？
         setAvailableBufferValue(0, -1);
     }
 
@@ -357,17 +357,21 @@ public final class MultiProducerSequencer extends AbstractSequencer {
      * --  Firstly we have the constraint that the delta between the cursor and minimum
      * gating sequence will never be larger than the buffer size (the code in
      * next/tryNext in the Sequence takes care of that).
+     * <p>
      * -- Given that; take the sequence value and mask off the lower portion of the
      * sequence as the index into the buffer (indexMask). (aka modulo operator)
+     * <p>
      * -- The upper portion of the sequence becomes the value to check for availability.
      * ie: it tells us how many times around the ring buffer we've been (aka division)
+     * <p>
      * -- Because we can't wrap without the gating sequences moving forward (i.e. the
      * minimum gating sequence is effectively our last available position in the
      * buffer), when we have new data and successfully claimed a slot we can simply
      * write over the top.
      */
     private void setAvailable(final long sequence) {
-        // TODO: 这里的可用标记为什么是环（round），而不是简单的1或0？
+        // 这里的可用标记为什么是环（round），而不是简单的1或0？
+        // 为了判断数据是否过时了,  参看isAvailable的逻辑
         setAvailableBufferValue(calculateIndex(sequence), calculateAvailabilityFlag(sequence));
     }
 
@@ -393,8 +397,8 @@ public final class MultiProducerSequencer extends AbstractSequencer {
      * 查询 nextSequence-availableSequence 区间段之间连续发布的最大序号。多生产者模式下可能是不连续的。
      * 多生产者模式下{@link Sequencer#next(int)} next是预分配的，因此可能部分数据还未被填充。
      * <p>
-     * 警告：该操作十分消耗性能，如果{@link WaitStrategy#waitFor(long, Sequence, Sequence, SequenceBarrier)}获取sequence之后不完全消费，
-     * 而是每次消费一点，再拉取一点，则会在该操作上形成巨大的开销。
+     * 警告：该操作十分消耗性能，如果{@link WaitStrategy#waitFor(long, Sequence, Sequence, SequenceBarrier)}
+     * 获取sequence之后不完全消费，而是每次消费一点，再拉取一点，则会在该操作上形成巨大的开销。
      *
      * @param lowerBound        我期望消费的最小序号，前面的一定都已经发布了
      * @param availableSequence The sequence to scan to.看见的已发布的最大序号
@@ -425,5 +429,12 @@ public final class MultiProducerSequencer extends AbstractSequencer {
      */
     private int calculateIndex(final long sequence) {
         return ((int) sequence) & indexMask;
+    }
+
+
+    public static void main(String[] args) {
+//        Sequencer sequencer = new SingleProducerSequencer(4, new BlockingWaitStrategy());
+        Sequencer sequencer = new MultiProducerSequencer(4, new BlockingWaitStrategy());
+        System.out.println(ClassLayout.parseInstance(sequencer).toPrintable());
     }
 }

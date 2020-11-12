@@ -15,6 +15,8 @@
  */
 package com.lmax.disruptor;
 
+import org.openjdk.jol.info.ClassLayout;
+
 import java.util.concurrent.atomic.AtomicInteger;
 
 
@@ -53,7 +55,7 @@ public final class BatchEventProcessor<T> implements EventProcessor {
     /**
      * 处理事件时的异常处理器
      * 警告！！！
-     * 默认的异常处理器{@link com.lmax.disruptor.dsl.Disruptor#exceptionHandler}，在出现异常时会打断运行，会导致死锁！
+     * 默认的异常处理器{@link com.lmax.disruptor.dsl.Disruptor#handleExceptionsWith}，在出现异常时会打断运行，会导致死锁！
      */
     private ExceptionHandler<? super T> exceptionHandler = new FatalExceptionHandler();
     /**
@@ -270,5 +272,15 @@ public final class BatchEventProcessor<T> implements EventProcessor {
                 exceptionHandler.handleOnShutdownException(ex);
             }
         }
+    }
+
+    public static void main(String[] args) {
+        //创建一个RingBuffer，注意容量是4。
+        RingBuffer<Object> ringBuffer = RingBuffer.createSingleProducer(() -> new Object(), 4);
+
+        BatchEventProcessor<Object> processor = new BatchEventProcessor<>(ringBuffer, ringBuffer.newBarrier(),
+                (event, sequence, endOfBatch) -> {});
+
+        System.out.println(ClassLayout.parseInstance(processor).toPrintable());
     }
 }

@@ -175,4 +175,8 @@ public final class WorkerPool<T> {
     public boolean isRunning() {
         return started.get();
     }
+
+    public static void main(String[] args) {
+
+    }
 }

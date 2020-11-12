@@ -167,9 +167,5 @@ public abstract class AbstractSequencer implements Sequencer {
                 '}';
     }
 
-    public static void main(String[] args) {
-//        Sequencer sequencer = new SingleProducerSequencer(4, new BlockingWaitStrategy());
-        Sequencer sequencer = new MultiProducerSequencer(4, new BlockingWaitStrategy());
-        System.out.println(ClassLayout.parseInstance(sequencer).toPrintable());
-    }
+
 }

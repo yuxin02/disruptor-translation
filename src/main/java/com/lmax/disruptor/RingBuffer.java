@@ -1068,6 +1068,6 @@ public final class RingBuffer<E> extends RingBufferFields<E> implements Cursored
 
         RingBuffer<Integer> ringBuffer = new RingBuffer<>(() -> new Integer(0), sequencer);
 
-//        System.out.println(ClassLayout.parseInstance(ringBuffer).toPrintable());
+        System.out.println(ClassLayout.parseInstance(ringBuffer).toPrintable());
     }
 }

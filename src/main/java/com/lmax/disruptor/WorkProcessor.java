@@ -62,13 +62,10 @@ public final class WorkProcessor<T> implements EventProcessor {
      */
     private final Sequence workSequence;
 
-    private final EventReleaser eventReleaser = new EventReleaser() {
-        @Override
-        public void release() {
-            // 设置为MAX_VALUE可以使得当前线程停止消费，且不影响生产者和其它消费者
-            sequence.set(Long.MAX_VALUE);
-        }
-    };
+    /**
+     * 设置为MAX_VALUE可以使得当前线程停止消费，且不影响生产者和其它消费者
+     */
+    private final EventReleaser eventReleaser = () -> sequence.set(Long.MAX_VALUE);
 
     private final TimeoutHandler timeoutHandler;
 
