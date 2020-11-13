@@ -16,6 +16,8 @@
 package com.lmax.disruptor;
 
 
+import org.openjdk.jol.info.ClassLayout;
+
 /**
  * 消费者使用的事件处理器序号屏障
  * {@link SequenceBarrier} handed out for gating {@link EventProcessor}s on a cursor sequence and optional dependent {@link EventProcessor}(s),
@@ -113,5 +115,13 @@ final class ProcessingSequenceBarrier implements SequenceBarrier {
         if (alerted) {
             throw AlertException.INSTANCE;
         }
+    }
+
+
+    public static void main(String[] args) {
+        SingleProducerSequencer sequencer = new SingleProducerSequencer(4, new BlockingWaitStrategy());
+        RingBuffer<Integer> ringBuffer = new RingBuffer<>(() -> new Integer(0), sequencer);
+
+        System.out.println(ClassLayout.parseInstance(ringBuffer.newBarrier()).toPrintable());
     }
 }
