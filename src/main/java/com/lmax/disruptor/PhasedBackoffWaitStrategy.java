@@ -49,12 +49,10 @@ public final class PhasedBackoffWaitStrategy implements WaitStrategy {
      * @param units        Time units used for the timeout values.
      * @return The constructed wait strategy.
      */
-    public static PhasedBackoffWaitStrategy withLock(
-            long spinTimeout,
-            long yieldTimeout,
-            TimeUnit units) {
-        return new PhasedBackoffWaitStrategy(
-                spinTimeout, yieldTimeout,
+    public static PhasedBackoffWaitStrategy withLock(long spinTimeout,
+                                                     long yieldTimeout,
+                                                     TimeUnit units) {
+        return new PhasedBackoffWaitStrategy(spinTimeout, yieldTimeout,
                 units, new BlockingWaitStrategy());
     }
 
@@ -83,12 +81,10 @@ public final class PhasedBackoffWaitStrategy implements WaitStrategy {
      * @param units        Time units used for the timeout values.
      * @return The constructed wait strategy.
      */
-    public static PhasedBackoffWaitStrategy withSleep(
-            long spinTimeout,
-            long yieldTimeout,
-            TimeUnit units) {
-        return new PhasedBackoffWaitStrategy(
-                spinTimeout, yieldTimeout,
+    public static PhasedBackoffWaitStrategy withSleep(long spinTimeout,
+                                                      long yieldTimeout,
+                                                      TimeUnit units) {
+        return new PhasedBackoffWaitStrategy(spinTimeout, yieldTimeout,
                 units, new SleepingWaitStrategy(0));
     }
 

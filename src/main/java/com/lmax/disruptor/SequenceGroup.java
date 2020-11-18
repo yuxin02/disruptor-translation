@@ -15,9 +15,9 @@
  */
 package com.lmax.disruptor;
 
-import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
-
 import com.lmax.disruptor.util.Util;
+
+import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 
 /**
  * 可以动态增删的Sequence组，进度组
@@ -27,17 +27,15 @@ import com.lmax.disruptor.util.Util;
  * The {@link SequenceGroup#get()} and {@link SequenceGroup#set(long)} methods are lock free and can be
  * concurrently be called with the {@link SequenceGroup#add(Sequence)} and {@link SequenceGroup#remove(Sequence)}.
  */
-public final class SequenceGroup extends Sequence
-{
+public final class SequenceGroup extends Sequence {
     private static final AtomicReferenceFieldUpdater<SequenceGroup, Sequence[]> SEQUENCE_UPDATER =
-        AtomicReferenceFieldUpdater.newUpdater(SequenceGroup.class, Sequence[].class, "sequences");
+            AtomicReferenceFieldUpdater.newUpdater(SequenceGroup.class, Sequence[].class, "sequences");
     private volatile Sequence[] sequences = new Sequence[0];
 
     /**
      * Default Constructor
      */
-    public SequenceGroup()
-    {
+    public SequenceGroup() {
         super(-1);
     }
 
@@ -47,42 +45,37 @@ public final class SequenceGroup extends Sequence
      * @return the minimum sequence value for the group.
      */
     @Override
-    public long get()
-    {
+    public long get() {
         return Util.getMinimumSequence(sequences);
     }
 
     /**
-	 * 将所有的Sequence设置到同一个进度。
-	 * 所有！所有！所有！
+     * 将所有的Sequence设置到同一个进度。
+     * 所有！所有！所有！
      * Set all {@link Sequence}s in the group to a given value.
      *
      * @param value to set the group of sequences to.
      */
     @Override
-    public void set(final long value)
-    {
+    public void set(final long value) {
         final Sequence[] sequences = this.sequences;
-        for (Sequence sequence : sequences)
-        {
+        for (Sequence sequence : sequences) {
             sequence.set(value);
         }
     }
 
     /**
-	 * 添加一个Sequence到该组
+     * 添加一个Sequence到该组
      * Add a {@link Sequence} into this aggregate.  This should only be used during
      * initialisation.  Use {@link SequenceGroup#addWhileRunning(Cursored, Sequence)}
      *
      * @param sequence to be added to the aggregate.
      * @see SequenceGroup#addWhileRunning(Cursored, Sequence)
      */
-    public void add(final Sequence sequence)
-    {
+    public void add(final Sequence sequence) {
         Sequence[] oldSequences;
         Sequence[] newSequences;
-        do
-        {
+        do {
             oldSequences = sequences;
             final int oldSize = oldSequences.length;
             newSequences = new Sequence[oldSize + 1];
@@ -93,14 +86,13 @@ public final class SequenceGroup extends Sequence
     }
 
     /**
-	 * 移除第一个匹配的Sequence
+     * 移除第一个匹配的Sequence
      * Remove the first occurrence of the {@link Sequence} from this aggregate.
      *
      * @param sequence to be removed from this aggregate.
      * @return true if the sequence was removed otherwise false.
      */
-    public boolean remove(final Sequence sequence)
-    {
+    public boolean remove(final Sequence sequence) {
         return SequenceGroups.removeSequence(this, SEQUENCE_UPDATER, sequence);
     }
 
@@ -109,14 +101,13 @@ public final class SequenceGroup extends Sequence
      *
      * @return the size of the group.
      */
-    public int size()
-    {
+    public int size() {
         return sequences.length;
     }
 
     /**
-	 * 在运行期间添加一个Sequence
-	 *
+     * 在运行期间添加一个Sequence
+     * <p>
      * Adds a sequence to the sequence group after threads have started to publish to
      * the Disruptor.  It will set the sequences to cursor value of the ringBuffer
      * just after adding them.  This should prevent any nasty rewind/wrapping effects.
@@ -125,8 +116,7 @@ public final class SequenceGroup extends Sequence
      *                 be pulling it's events from.
      * @param sequence The sequence to add.
      */
-    public void addWhileRunning(Cursored cursored, Sequence sequence)
-    {
+    public void addWhileRunning(Cursored cursored, Sequence sequence) {
         SequenceGroups.addSequences(this, SEQUENCE_UPDATER, cursored, sequence);
     }
 }

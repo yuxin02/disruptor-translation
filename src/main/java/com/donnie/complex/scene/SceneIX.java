@@ -14,8 +14,8 @@ import java.util.concurrent.Executors;
  * (P1,P2,P3)--C1
  */
 public class SceneIX {
-    // 1024
-    public static final int BUFFER_SIZE = 1 << 10 << 10;
+    // 1048576
+    private static final int BUFFER_SIZE = 1 << 10 << 10;
 
     public static void main(String[] args) throws InterruptedException {
         Disruptor<OrderEvent> disruptor =

@@ -659,8 +659,7 @@ public class Disruptor<T> {
      *                         数组长度决定线程的数量。
      *                         如果这些语法觉得有点奇怪的是正常的，为了更好的灵活性，比传数量会好一些
      */
-    EventHandlerGroup<T> createWorkerPool(
-            final Sequence[] barrierSequences, final WorkHandler<? super T>[] workHandlers) {
+    EventHandlerGroup<T> createWorkerPool(final Sequence[] barrierSequences, final WorkHandler<? super T>[] workHandlers) {
         final SequenceBarrier sequenceBarrier = ringBuffer.newBarrier(barrierSequences);
         final WorkerPool<T> workerPool = new WorkerPool<>(ringBuffer, sequenceBarrier, exceptionHandler, workHandlers);
 

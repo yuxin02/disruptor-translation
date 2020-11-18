@@ -7,6 +7,7 @@ import com.donnie.disruptor.handler.PersonWorkerHandler;
 import com.lmax.disruptor.IgnoreExceptionHandler;
 import com.lmax.disruptor.RingBuffer;
 import com.lmax.disruptor.WorkerPool;
+import com.lmax.disruptor.dsl.BasicExecutor;
 
 import java.io.IOException;
 import java.util.concurrent.Executor;
@@ -39,7 +40,7 @@ public class MainTest {
         //将WorkPool的工作序列集设置为ringBuffer的追踪序列。
         ringBuffer.addGatingSequences(workerPool.getWorkerSequences());
         //创建一个线程池用于执行Workhandler。
-        Executor executor = Executors.newFixedThreadPool(4);
+        Executor executor = new BasicExecutor(Executors.defaultThreadFactory());
         //启动WorkPool。
         workerPool.start(executor);
 

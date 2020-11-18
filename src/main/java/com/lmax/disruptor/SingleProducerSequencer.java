@@ -55,9 +55,9 @@ abstract class SingleProducerSequencerFields extends SingleProducerSequencerPad 
      * 因为是单线程的生产者，数据无竞争，因此使用普通的long变量即可。
      * <p>
      * 在运行期间不调用{@link #claim(long)}的情况下：
-     * 1.该缓存值是单调递增的，只会变大不会变小 2. cachedValue <= nextValue
-     * 如果在运行期间调用了{@link #claim(long)}
-     * 可能造成cachedValue > nextValue
+     * 1.该缓存值是单调递增的，只会变大不会变小
+     * 2. cachedValue <= nextValue
+     *      如果在运行期间调用了{@link #claim(long)}可能造成cachedValue > nextValue
      *
      * <p>
      * Q: 该缓存值的作用？

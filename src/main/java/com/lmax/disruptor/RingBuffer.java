@@ -102,6 +102,7 @@ abstract class RingBufferFields<E> extends RingBufferPad {
 
     @SuppressWarnings("unchecked")
     protected final E elementAt(long sequence) {
+        // get是通过UNSAFE，提高性能
         return (E) UNSAFE.getObject(entries, REF_ARRAY_BASE + ((sequence & indexMask) << REF_ELEMENT_SHIFT));
     }
 }

@@ -15,10 +15,11 @@ import java.util.concurrent.Executors;
  * (C1&C2) -- 表示每个消费者都会对m进行消费，各个消费者之间不存在竞争
  */
 public class SceneI {
-    // 1024
-    public static final int BUFFER_SIZE = 1 << 10 << 10;
+    // 1048576
+    private static final int BUFFER_SIZE = 1 << 10 << 10;
 
     public static void main(String[] args) throws InterruptedException {
+        System.out.println(BUFFER_SIZE);
         Disruptor<OrderEvent> disruptor = new Disruptor<>(new OrderEventFactory(),
                 BUFFER_SIZE,
                 Executors.defaultThreadFactory(),

@@ -16,10 +16,6 @@
 package com.lmax.disruptor;
 
 
-import com.lmax.disruptor.AlertException;
-import com.lmax.disruptor.Sequence;
-import com.lmax.disruptor.SequenceBarrier;
-import com.lmax.disruptor.WaitStrategy;
 import com.lmax.disruptor.util.ThreadHints;
 
 /**
@@ -30,24 +26,21 @@ import com.lmax.disruptor.util.ThreadHints;
  * 特征：极低的延迟，极高的吞吐量，以及极高的CPU占用。
  * </p>
  * 如果你要使用该等待策略，确保有足够的CPU资源，且你能接受它带来的CPU使用率。
- *
+ * <p>
  * Busy Spin strategy that uses a busy spin loop for {@link com.lmax.disruptor.EventProcessor}s waiting on a barrier.
  * <p>
  * This strategy will use CPU resource to avoid syscalls which can introduce latency jitter.  It is best
  * used when threads can be bound to specific CPU cores.
  */
-public final class BusySpinWaitStrategy implements WaitStrategy
-{
+public final class BusySpinWaitStrategy implements WaitStrategy {
     @Override
-    public long waitFor(
-            final long sequence, Sequence cursor, final Sequence dependentSequence, final SequenceBarrier barrier)
-        throws AlertException, InterruptedException
-    {
+    public long waitFor(final long sequence, Sequence cursor,
+                        final Sequence dependentSequence, final SequenceBarrier barrier)
+            throws AlertException, InterruptedException {
         long availableSequence;
 
         // 确保该序号已经被我前面的消费者消费(协调与其他消费者的关系)
-        while ((availableSequence = dependentSequence.get()) < sequence)
-        {
+        while ((availableSequence = dependentSequence.get()) < sequence) {
             barrier.checkAlert();
             // 自旋等待
             ThreadHints.onSpinWait();
@@ -57,7 +50,6 @@ public final class BusySpinWaitStrategy implements WaitStrategy
     }
 
     @Override
-    public void signalAllWhenBlocking()
-    {
+    public void signalAllWhenBlocking() {
     }
 }

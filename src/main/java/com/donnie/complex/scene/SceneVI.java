@@ -12,8 +12,8 @@ import java.util.concurrent.Executors;
  * P--(C1|C2)--(C3|C4)--C5
  */
 public class SceneVI {
-    // 1024
-    public static final int BUFFER_SIZE = 1 << 10 << 10;
+    // 1048576
+    private static final int BUFFER_SIZE = 1 << 10 << 10;
 
     public static void main(String[] args) throws InterruptedException {
         Disruptor<OrderEvent> disruptor =

@@ -68,20 +68,6 @@ public class MainTest {
         ringBuffer = RingBuffer.createSingleProducer(MainTest::eventFactory, 4);
 
         long sequence = ringBuffer.next();
-        sequence = ringBuffer.next();
-        sequence = ringBuffer.next();
-        sequence = ringBuffer.next();
-        sequence = ringBuffer.next();
-        sequence = ringBuffer.next();
-        sequence = ringBuffer.next();
-        sequence = ringBuffer.next();
-        sequence = ringBuffer.next();
-        sequence = ringBuffer.next();
-        sequence = ringBuffer.next();
-        sequence = ringBuffer.next();
-        sequence = ringBuffer.next();
-        System.out.println("RingBuffer: " + ringBuffer);
-
         try {
             PersonEvent personEvent = ringBuffer.get(sequence);
             Person p = new Person(3, "Li Si");

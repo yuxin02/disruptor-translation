@@ -17,7 +17,8 @@ public class MainTest {
 
     public static void main(String[] args) {
         logger.info("Start testing ...");
-        Disruptor<PersonEvent> disruptor = new Disruptor<>(new PersonEventFactory(), 4, Executors.defaultThreadFactory());
+        Disruptor<PersonEvent> disruptor = new Disruptor<>(new PersonEventFactory(), 4,
+                Executors.defaultThreadFactory());
 
         EventHandler<PersonEvent> handler1 = (event, sequence, endOfBatch) -> {
             System.out.println("handle event's data:" + event.getPerson() + "isEndOfBatch:" + endOfBatch);
@@ -29,6 +30,7 @@ public class MainTest {
         };
 
         EventHandler<PersonEvent> handler2 = (event, sequence, endOfBatch) -> {
+            // TPP
             System.out.println("kick your ass " + sequence + " times!!!!");
         };
 

@@ -6,11 +6,11 @@ package com.lmax.disruptor;
  * Implement this interface in your {@link EventHandler} to be notified when a thread for the
  * {@link BatchEventProcessor} start process events.
  */
-public interface BatchStartAware
-{
-	/**
-	 * 批处理开始
-	 * @param batchSize 本批次事件个数
-	 */
+public interface BatchStartAware {
+    /**
+     * 批处理开始
+     *
+     * @param batchSize 本批次事件个数
+     */
     void onBatchStart(long batchSize);
 }
