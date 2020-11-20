@@ -18,9 +18,7 @@ public class SceneIX {
     private static final int BUFFER_SIZE = 1 << 10 << 10;
 
     public static void main(String[] args) throws InterruptedException {
-        Disruptor<OrderEvent> disruptor =
-                new Disruptor<>(new OrderEventFactory(), BUFFER_SIZE,
-                        Executors.defaultThreadFactory(),
+        Disruptor<OrderEvent> disruptor = new Disruptor<>(new OrderEventFactory(), BUFFER_SIZE, Executors.defaultThreadFactory(),
                         ProducerType.MULTI,  // 注意这里一定要使用MULTI，否则会出现消息覆盖的情况
                         new YieldingWaitStrategy());
 

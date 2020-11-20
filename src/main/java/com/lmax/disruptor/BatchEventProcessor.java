@@ -89,9 +89,7 @@ public final class BatchEventProcessor<T> implements EventProcessor {
      * @param sequenceBarrier on which it is waiting.
      * @param eventHandler    is the delegate to which events are dispatched.
      */
-    public BatchEventProcessor(final DataProvider<T> dataProvider,
-                               final SequenceBarrier sequenceBarrier,
-                               final EventHandler<? super T> eventHandler) {
+    public BatchEventProcessor(final DataProvider<T> dataProvider, final SequenceBarrier sequenceBarrier, final EventHandler<? super T> eventHandler) {
         this.dataProvider = dataProvider;
         this.sequenceBarrier = sequenceBarrier;
         this.eventHandler = eventHandler;
@@ -279,7 +277,8 @@ public final class BatchEventProcessor<T> implements EventProcessor {
         RingBuffer<Object> ringBuffer = RingBuffer.createSingleProducer(() -> new Object(), 4);
 
         BatchEventProcessor<Object> processor = new BatchEventProcessor<>(ringBuffer, ringBuffer.newBarrier(),
-                (event, sequence, endOfBatch) -> {});
+                (event, sequence, endOfBatch) -> {
+                });
 
         System.out.println(ClassLayout.parseInstance(processor).toPrintable());
     }

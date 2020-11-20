@@ -17,8 +17,10 @@ package com.lmax.disruptor.dsl;
 
 import com.lmax.disruptor.*;
 import com.lmax.disruptor.util.Util;
+import org.openjdk.jol.info.ClassLayout;
 
 import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -580,7 +582,7 @@ public class Disruptor<T> {
     /**
      * 创建事件处理器(创建BatchEventProcessor消费者)
      *
-     * @param barrierSequences 屏障sequences， {@link com.lmax.disruptor.ProcessingSequenceBarrier#dependentSequence}
+     * @param barrierSequences 屏障sequences
      *                         消费者的消费进度需要慢于它的前驱消费者
      * @param eventHandlers    事件处理方法 每一个EventHandler都会被包装为{@link BatchEventProcessor}(一个独立的消费者).
      * @return
@@ -698,5 +700,11 @@ public class Disruptor<T> {
                 ", started=" + started +
                 ", executor=" + executor +
                 '}';
+    }
+
+    public static void main(String[] args) {
+        Disruptor<Integer> disruptor = new Disruptor<>(() -> new Integer(0), 4, Executors.defaultThreadFactory());
+
+        System.out.println(ClassLayout.parseInstance(disruptor).toPrintable());
     }
 }

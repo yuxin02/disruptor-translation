@@ -7,16 +7,15 @@ import com.lmax.disruptor.dsl.ProducerType;
 
 import java.util.concurrent.Executors;
 
+import static com.donnie.complex.common.Constants.BUFFER_SIZE;
+
 /**
- * 场景三：单生产者，多消费者模式。多消费者对于消息不重复消费。
+ * 场景二：单生产者，多消费者模式。多消费者对于消息不重复消费。
  * <p>
  * P--(C1|C2)
  * </p>
  */
 public class SceneII {
-    // 1048576
-    private static final int BUFFER_SIZE = 1 << 10 << 10;
-
     public static void main(String[] args) throws InterruptedException {
         Disruptor<OrderEvent> disruptor =
                 new Disruptor<>(new OrderEventFactory(), BUFFER_SIZE, Executors.defaultThreadFactory(), ProducerType.SINGLE, new YieldingWaitStrategy());

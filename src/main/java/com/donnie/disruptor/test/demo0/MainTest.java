@@ -29,10 +29,10 @@ public class MainTest {
     public static void main(String[] args) {
 //        exampleWithTranslator(5);
 //        exampleWithTranslatorAndArg();
-//        exampleOfRingBufferPublishDirectly();
+        exampleOfRingBufferPublishDirectly();
 
 
-        exampleWithMultiProducer();
+//        exampleWithMultiProducer();
 
         System.out.println("Remaining capacity: " + ringBuffer.remainingCapacity());
         PersonEvent personEvent = ringBuffer.get(0);

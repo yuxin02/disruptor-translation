@@ -71,8 +71,7 @@ abstract class RingBufferFields<E> extends RingBufferPad {
      */
     protected final Sequencer sequencer;
 
-    RingBufferFields(EventFactory<E> eventFactory,
-                     Sequencer sequencer) {
+    RingBufferFields(EventFactory<E> eventFactory, Sequencer sequencer) {
         this.sequencer = sequencer;
         this.bufferSize = sequencer.getBufferSize();
 
@@ -82,7 +81,6 @@ abstract class RingBufferFields<E> extends RingBufferPad {
         if (Integer.bitCount(bufferSize) != 1) {
             throw new IllegalArgumentException("bufferSize must be a power of 2");
         }
-
         // 掩码
         this.indexMask = bufferSize - 1;
         // 额外创建 2个填充空间的大小，首尾填充，避免数组的有效载荷和其它成员加载到同一缓存行。
@@ -172,11 +170,8 @@ public final class RingBuffer<E> extends RingBufferFields<E> implements Cursored
      * @throws IllegalArgumentException if bufferSize is less than 1 or not a power of 2
      * @see SingleProducerSequencer
      */
-    public static <E> RingBuffer<E> createSingleProducer(EventFactory<E> factory,
-                                                         int bufferSize,
-                                                         WaitStrategy waitStrategy) {
+    public static <E> RingBuffer<E> createSingleProducer(EventFactory<E> factory, int bufferSize, WaitStrategy waitStrategy) {
         SingleProducerSequencer sequencer = new SingleProducerSequencer(bufferSize, waitStrategy);
-
         return new RingBuffer<E>(factory, sequencer);
     }
 

@@ -69,10 +69,7 @@ public final class WorkerPool<T> {
      * @param workHandlers     to distribute the work load across.
      */
     @SafeVarargs
-    public WorkerPool(final RingBuffer<T> ringBuffer,
-                      final SequenceBarrier sequenceBarrier,
-                      final ExceptionHandler<? super T> exceptionHandler,
-                      final WorkHandler<? super T>... workHandlers) {
+    public WorkerPool(final RingBuffer<T> ringBuffer, final SequenceBarrier sequenceBarrier, final ExceptionHandler<? super T> exceptionHandler, final WorkHandler<? super T>... workHandlers) {
         this.ringBuffer = ringBuffer;
         final int numWorkers = workHandlers.length;
         workProcessors = new WorkProcessor[numWorkers];
@@ -117,6 +114,7 @@ public final class WorkerPool<T> {
         for (int i = 0, size = workProcessors.length; i < size; i++) {
             sequences[i] = workProcessors[i].getSequence();
         }
+        //TODO: 为什么将workSequence也加入其中？？？
         sequences[sequences.length - 1] = workSequence;
 
         return sequences;

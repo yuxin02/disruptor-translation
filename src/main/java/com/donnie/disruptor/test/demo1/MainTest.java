@@ -29,10 +29,7 @@ public class MainTest {
          * EventHandler使用自定义的。
          */
         BatchEventProcessor<PersonEvent> batchEventProcessor =
-                new BatchEventProcessor<>(
-                        ringBuffer,
-                        ringBuffer.newBarrier(),
-                        new PersonEventHandler());
+                new BatchEventProcessor<>(ringBuffer, ringBuffer.newBarrier(), new PersonEventHandler());
 
 
         //将事件处理器本身的序列设置为ringBuffer的追踪序列。

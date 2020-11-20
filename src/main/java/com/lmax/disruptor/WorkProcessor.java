@@ -53,12 +53,12 @@ public final class WorkProcessor<T> implements EventProcessor {
     private final WorkHandler<? super T> workHandler;
     /**
      * workProcessor绑定的异常处理器，
-     * 警告！！！默认的异常处理器{@link com.lmax.disruptor.dsl.Disruptor#exceptionHandler}，出现异常时会打断运行，可能导致死锁。
+     * 警告！！！默认的异常处理器{@link com.lmax.disruptor.dsl.Disruptor# exceptionHandler}，出现异常时会打断运行，可能导致死锁。
      */
     private final ExceptionHandler<? super T> exceptionHandler;
     /**
      * WorkerPool中的 workProcessor竞争通信的媒介。
-     * 详见：{@link WorkerPool#workSequence}
+     * 详见：{@link WorkerPool# workSequence}
      */
     private final Sequence workSequence;
 
@@ -175,6 +175,8 @@ public final class WorkProcessor<T> implements EventProcessor {
                     // 等待生产者进行生产，这里和BatchEventProcessor不同，
                     // 如果waitFor抛出TimeoutException、Throwable以外的异常，那么cachedAvailableSequence不会被更新，
                     // 也就不会导致nextSequence被标记为已消费！
+                    System.out.println(Thread.currentThread().getName() + " is waiting for seq#" + nextSequence
+                            + ", and current seq#" + sequence.get() + ", and work seq#" + workSequence.get());
                     cachedAvailableSequence = sequenceBarrier.waitFor(nextSequence);
                 }
             } catch (final TimeoutException e) {

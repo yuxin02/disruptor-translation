@@ -15,10 +15,6 @@
  */
 package com.lmax.disruptor;
 
-import com.lmax.disruptor.AlertException;
-import com.lmax.disruptor.Sequence;
-import com.lmax.disruptor.SequenceBarrier;
-import com.lmax.disruptor.WaitStrategy;
 import com.lmax.disruptor.util.ThreadHints;
 
 import java.util.concurrent.locks.Condition;
@@ -35,11 +31,8 @@ public final class BlockingWaitStrategy implements WaitStrategy {
     private final Condition processorNotifyCondition = lock.newCondition();
 
     @Override
-    public long waitFor(long wantedSequence,
-                        Sequence cursorSequence,
-                        Sequence dependentSequence,
-                        SequenceBarrier barrier)
-            throws AlertException, InterruptedException {
+    public long waitFor(long wantedSequence, Sequence cursorSequence, Sequence dependentSequence,
+                        SequenceBarrier barrier) throws AlertException, InterruptedException {
         // 确保生产者已生产了该数据，这期间可能阻塞
         long availableSequence;
         if (cursorSequence.get() < wantedSequence) {
